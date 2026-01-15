@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramadhan Slide Maker (AI)</title>
+    
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Lato:wght@300;400;700&family=Merriweather:wght@300;700&family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&family=Oswald:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: { 700: '#047857', 800: '#065f46', 900: '#064e3b', 950: '#022c22' },
+                        gold: { 300: '#FDE68A', 400: '#E6C25F', 500: '#D4AF37', 600: '#B5942D' }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Lato"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .islamic-pattern {
+            background-color: #f8fafc;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .slide-aspect { aspect-ratio: 16 / 9; }
+        
+        [contenteditable="true"]:focus { 
+            outline: 2px dashed #D4AF37; 
+            background-color: rgba(212, 175, 55, 0.1); 
+            border-radius: 4px; padding: 2px; position: relative; z-index: 50; 
+        }
+        
+        /* SIDEBAR TOOLBAR */
+        .slide-toolbar { opacity: 0; transition: opacity 0.2s ease-in-out; right: -60px; width: 50px; }
+        .slide-wrapper:hover .slide-toolbar { opacity: 1; }
+        
+        .sidebar-btn {
+            width: 36px; height: 36px; border-radius: 50%; background: white; color: #4b5563;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;
+            cursor: pointer; transition: all 0.2s; font-size: 14px; pointer-events: auto;
+        }
+        .sidebar-btn:hover { background: #f3f4f6; transform: scale(1.05); }
+        .sidebar-btn.danger { color: #dc2626; border-color: #fecaca; }
+        .sidebar-btn.danger:hover { background: #fef2f2; }
+        
+        /* --- IMAGE CONTAINER SYSTEM --- */
+        .img-container {
+            position: relative;
+            z-index: 30; 
+            cursor: pointer;
+            border: 2px solid transparent; 
+            transition: border-color 0.2s;
+        }
+        
+        .img-container.active-selection {
+            border-color: #3b82f6; 
+            z-index: 100; 
+        }
+
+        .img-container.active-selection img {
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Layout Modes */
+        .img-container.mode-left { float: left; margin-right: 1.5rem; margin-bottom: 1rem; }
+        .img-container.mode-right { float: right; margin-left: 1.5rem; margin-bottom: 1rem; }
+        .img-container.mode-center { display: block; margin-left: auto; margin-right: auto; margin-bottom: 1rem; clear: both; }
+        .img-container.mode-free { position: absolute; }
+
+        /* --- TOOLBAR (L/C/R/Free) --- */
+        .action-toolbar {
+            position: absolute;
+            bottom: -40px; left: 50%; transform: translateX(-50%);
+            background: #1f2937;
+            padding: 4px;
+            border-radius: 6px;
+            display: none; 
+            gap: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            z-index: 200;
+            white-space: nowrap;
+        }
+        
+        .img-container.active-selection .action-toolbar { display: flex; }
+
+        .tool-btn {
+            color: white; font-size: 10px; font-weight: bold;
+            padding: 4px 8px; border-radius: 4px; cursor: pointer;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+        }
+        .tool-btn:hover { background: rgba(255,255,255,0.2); }
+        .tool-btn.active-mode { background: #059669; border-color: #059669; }
+        .tool-btn.delete { background: #dc2626; border-color: #dc2626; }
+
+        /* --- RESIZE HANDLE --- */
+        .resize-dot {
+            width: 16px; height: 16px;
+            background: #D4AF37;
+            border: 2px solid white;
+            border-radius: 50%;
+            position: absolute;
+            bottom: -8px; right: -8px;
+            cursor: nwse-resize;
+            z-index: 201;
+            display: none; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .img-container.active-selection .resize-dot { display: block; }
+
+        /* TEXT TOOLBAR */
+        #textToolbar {
+            position: absolute; background: #1f2937; border-radius: 8px; padding: 6px; display: none; gap: 6px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 999; align-items: center;
+            transform: translateY(-100%); margin-top: -10px; border: 1px solid #374151;
+        }
+        #textToolbar::after {
+            content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+            border-width: 6px 6px 0; border-style: solid; border-color: #1f2937 transparent transparent transparent;
+        }
+        .text-btn { color: #d1d5db; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        .text-btn:hover { background: #374151; color: white; }
+        .text-select { background: #374151; color: white; border: none; font-size: 12px; padding: 4px; border-radius: 4px; outline: none; cursor: pointer; max-width: 100px; }
+        .text-color-input { width: 24px; height: 24px; border: none; background: transparent; cursor: pointer; }
+        .separator { width: 1px; height: 16px; background: #4b5563; margin: 0 4px; }
+        
+        .layer-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+        .bg-control-panel { background: white; padding: 8px; border-radius: 8px; margin-top: 8px; font-size: 10px; text-align: center; pointer-events: auto; z-index: 50; position: relative;}
+    </style>
+</head>
+<body class="bg-gray-100 h-screen overflow-hidden flex flex-col md:flex-row font-sans">
+
+    <!-- FLOATING TEXT TOOLBAR -->
+    <div id="textToolbar" data-html2canvas-ignore="true">
+        <select id="fontFamilySelect" class="text-select" onchange="execCmd('fontName', this.value)">
+            <option value="Lato">Lato</option>
+            <option value="Playfair Display">Playfair</option>
+            <option value="Roboto">Roboto</option>
+            <option value="Open Sans">Open Sans</option>
+            <option value="Montserrat">Montserrat</option>
+            <option value="Merriweather">Merriweather</option>
+            <option value="Poppins">Poppins</option>
+            <option value="Dancing Script">Dancing Script</option>
+            <option value="Amiri">Amiri (Arab)</option>
+            <option value="Oswald">Oswald</option>
+        </select>
+        <div class="separator"></div>
+        <button class="text-btn font-bold" onmousedown="event.preventDefault(); execCmd('bold')">B</button>
+        <button class="text-btn italic" onmousedown="event.preventDefault(); execCmd('italic')">I</button>
+        <button class="text-btn underline" onmousedown="event.preventDefault(); execCmd('underline')">U</button>
+        <button class="text-btn line-through" onmousedown="event.preventDefault(); execCmd('strikeThrough')">S</button>
+        <div class="separator"></div>
+        <button class="text-btn" onmousedown="event.preventDefault(); execCmd('fontSize', '3')">A</button>
+        <button class="text-btn text-lg" onmousedown="event.preventDefault(); execCmd('fontSize', '5')">A+</button>
+        <button class="text-btn text-xl" onmousedown="event.preventDefault(); execCmd('fontSize', '7')">A++</button>
+        <div class="separator"></div>
+        <input type="color" id="foreColorInput" class="text-color-input" oninput="execCmd('foreColor', this.value)">
+    </div>
+
+    <!-- HIDDEN INPUTS -->
+    <input type="file" id="imageUploader" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+    <input type="file" id="bgUploader" accept="image/*" class="hidden" onchange="handleBgUpload(event)">
+
+    <!-- SIDEBAR -->
+    <aside class="w-full md:w-1/3 lg:w-1/4 bg-emerald-950 text-white flex flex-col h-full shadow-2xl z-20 border-r border-emerald-900">
+        <div class="p-6 border-b border-emerald-900 bg-emerald-900/50">
+            <h1 class="text-3xl font-serif text-gold-500 font-bold mb-1 leading-tight">Ramadhan Slide Maker</h1>
+            <p class="text-xs text-emerald-300 uppercase tracking-widest mt-1">AI Presentation Tool</p>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+            <!-- API KEY INPUT -->
+            <div class="space-y-2 pb-4 border-b border-emerald-800/50">
+                <label class="text-xs font-bold text-gold-400 uppercase tracking-wide flex justify-between items-center">
+                    Google Gemini API Key
+                    <span class="text-[10px] text-emerald-400 font-normal normal-case opacity-70">Wajib diisi</span>
+                </label>
+                <div class="relative">
+                    <input type="password" id="apiKeyInput" placeholder="Tempel API Key disini..." class="w-full bg-emerald-950 border border-emerald-700 rounded-lg p-3 pr-10 text-white focus:ring-2 focus:ring-gold-500 text-sm font-mono" onchange="saveApiKey(this.value)">
+                    <button onclick="toggleApiKeyVisibility()" class="absolute right-3 top-3 text-emerald-500 hover:text-emerald-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+                <p class="text-[10px] text-emerald-400/60 leading-tight">Key tersimpan otomatis di browser lokal Anda. Tidak dikirim ke server kami.</p>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-emerald-200 uppercase tracking-wide">Topik</label>
+                <input type="text" id="topicInput" placeholder="Contoh: Keutamaan Ramadan" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-gold-500">
+            </div>
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-emerald-200 uppercase tracking-wide">Pembicara</label>
+                <input type="text" id="speakerInput" placeholder="Contoh: Ustadz Ahmad" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-gold-500">
+            </div>
+             <div class="space-y-2">
+                <label class="text-xs font-bold text-emerald-200 uppercase tracking-wide">Jumlah Slide</label>
+                <select id="slideCountInput" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white cursor-pointer">
+                    <option value="5">5 Slide</option>
+                    <option value="7">7 Slide</option>
+                    <option value="10">10 Slide</option>
+                </select>
+            </div>
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-emerald-200 uppercase tracking-wide">Gaya Bahasa</label>
+                <select id="toneInput" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white cursor-pointer">
+                    <option value="khidmat">Khidmat & Menyentuh Hati</option>
+                    <option value="semangat">Semangat & Membakar Jiwa</option>
+                    <option value="santai">Santai & Kekinian</option>
+                    <option value="formal">Formal & Akademis</option>
+                    <option value="ceria">Ceria & Anak-anak</option>
+                </select>
+            </div>
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-emerald-200 uppercase tracking-wide">Tema Visual</label>
+                <select id="styleInput" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white cursor-pointer" onchange="renderSlides(slidesData)">
+                    <optgroup label="Klasik">
+                        <option value="luxury">Mewah Islami</option>
+                        <option value="minimal">Minimalis</option>
+                        <option value="dark">Malam Elegan</option>
+                    </optgroup>
+                    <optgroup label="Premium">
+                        <option value="midnight">Midnight Blue</option>
+                        <option value="sahara">Desert Warmth</option>
+                        <option value="royal">Royal Purple</option>
+                        <option value="jannah">Emerald Garden</option>
+                        <option value="iftar">Sunset Gradient</option>
+                    </optgroup>
+                </select>
+            </div>
+        </div>
+        <div class="p-6 bg-emerald-950 border-t border-emerald-900 space-y-3">
+            <button onclick="generateSlides()" id="generateBtn" class="w-full bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 text-emerald-950 font-bold py-3.5 px-4 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">Buat Slide AI</button>
+            <button onclick="downloadPDF()" id="downloadBtn" disabled class="w-full border border-emerald-700 text-emerald-300 hover:bg-emerald-900/50 py-3 rounded-lg disabled:opacity-50">Ekspor PDF</button>
+        </div>
+    </aside>
+
+    <!-- PREVIEW AREA -->
+    <main class="flex-1 h-full overflow-hidden flex flex-col bg-gray-100 relative" 
+          onmousedown="handleCanvasClick(event)"
+          onmousemove="handleGlobalMouseMove(event)"
+          onmouseup="handleGlobalMouseUp(event)">
+          
+        <div class="h-16 bg-white border-b flex items-center justify-between px-6 shadow-sm z-30 relative">
+            <h2 class="text-gray-600 font-bold">Pratinjau Slide</h2>
+        </div>
+        
+        <div id="slideContainer" class="flex-1 overflow-y-auto pl-8 pr-28 py-8 space-y-12 flex flex-col items-center islamic-pattern pb-32 relative z-10"></div>
+        
+        <div id="loader" class="absolute top-16 inset-x-0 bottom-0 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center z-50 hidden">
+            <div class="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+            <p class="mt-4 text-emerald-800 font-bold animate-pulse">Sedang Meracik Konten...</p>
+        </div>
+    </main>
+
+    <script>
+        // --- DATA & STATE ---
+        let slidesData = [];
+        let currentUploadIdx = -1;
+        let currentBgUploadIdx = -1;
+
+        let activeSelection = null;
+        let dragMode = null; 
+        let dragTarget = null; 
+        let dragStartData = {}; 
+
+        // --- INIT API KEY ---
+        window.onload = function() {
+            const savedKey = localStorage.getItem('gemini_api_key');
+            if(savedKey) {
+                document.getElementById('apiKeyInput').value = savedKey;
+            }
+        };
+
+        function saveApiKey(val) {
+            localStorage.setItem('gemini_api_key', val);
+        }
+
+        function toggleApiKeyVisibility() {
+            const input = document.getElementById('apiKeyInput');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function getApiKey() {
+            return document.getElementById('apiKeyInput').value.trim();
+        }
+
+        // --- MANAJEMEN SELEKSI ---
+
+        function handleCanvasClick(e) {
+            if (dragMode) return;
+
+            const target = e.target;
+            
+            if (target.classList.contains('tool-btn')) {
+                e.stopPropagation(); 
+                const action = target.dataset.action;
+                const container = target.closest('.img-container');
+                const sIdx = parseInt(container.dataset.sidx);
+                const iIdx = parseInt(container.dataset.iidx);
+                
+                if (action === 'delete') {
+                    deleteImg(sIdx, iIdx);
+                } else {
+                    changeLayout(sIdx, iIdx, action);
+                }
+                return;
+            }
+
+            if (target.classList.contains('resize-dot')) {
+                e.preventDefault();
+                e.stopPropagation();
+                startInteraction(e, 'resize', target.closest('.img-container'));
+                return;
+            }
+
+            const container = target.closest('.img-container');
+            if (container) {
+                e.stopPropagation();
+                const isFree = container.classList.contains('mode-free');
+                setActiveSelection(parseInt(container.dataset.sidx), parseInt(container.dataset.iidx));
+                if (isFree) {
+                    startInteraction(e, 'move', container);
+                }
+                return;
+            }
+
+            if (!target.closest('.img-container') && !target.closest('.tool-btn')) {
+                clearSelection();
+            }
+        }
+
+        function setActiveSelection(sIdx, iIdx) {
+            activeSelection = { sIdx, iIdx };
+            document.querySelectorAll('.img-container').forEach(el => {
+                const elS = parseInt(el.dataset.sidx);
+                const elI = parseInt(el.dataset.iidx);
+                if (elS === sIdx && elI === iIdx) {
+                    el.classList.add('active-selection');
+                } else {
+                    el.classList.remove('active-selection');
+                }
+            });
+        }
+
+        function clearSelection() {
+            activeSelection = null;
+            document.querySelectorAll('.img-container').forEach(el => el.classList.remove('active-selection'));
+        }
+
+        function startInteraction(e, mode, element) {
+            dragMode = mode;
+            dragTarget = element;
+            
+            dragStartData = {
+                x: element.offsetLeft, 
+                y: element.offsetTop,
+                w: element.offsetWidth,
+                mx: e.clientX,
+                my: e.clientY
+            };
+        }
+
+        function handleGlobalMouseMove(e) {
+            if (!dragMode || !dragTarget) return;
+            e.preventDefault();
+
+            const dx = e.clientX - dragStartData.mx;
+            const dy = e.clientY - dragStartData.my;
+
+            if (dragMode === 'move') {
+                dragTarget.style.left = (dragStartData.x + dx) + 'px';
+                dragTarget.style.top = (dragStartData.y + dy) + 'px';
+            } else if (dragMode === 'resize') {
+                const newWidth = Math.max(50, dragStartData.w + dx);
+                dragTarget.style.width = newWidth + 'px';
+            }
+        }
+
+        function handleGlobalMouseUp(e) {
+            if (!dragMode || !dragTarget) return;
+
+            const sIdx = parseInt(dragTarget.dataset.sidx);
+            const iIdx = parseInt(dragTarget.dataset.iidx);
+            
+            if (slidesData[sIdx] && slidesData[sIdx].images[iIdx]) {
+                const imgData = slidesData[sIdx].images[iIdx];
+                
+                if (dragMode === 'move') {
+                    imgData.x = parseFloat(dragTarget.style.left);
+                    imgData.y = parseFloat(dragTarget.style.top);
+                } else if (dragMode === 'resize') {
+                    imgData.width = dragTarget.style.width;
+                }
+            }
+            dragMode = null;
+            dragTarget = null;
+        }
+
+        function changeLayout(sIdx, iIdx, layout) {
+            if (!slidesData[sIdx].images[iIdx]) return;
+            slidesData[sIdx].images[iIdx].layout = layout;
+            if (layout === 'free' && !slidesData[sIdx].images[iIdx].x) {
+                slidesData[sIdx].images[iIdx].x = 100;
+                slidesData[sIdx].images[iIdx].y = 100;
+            }
+            activeSelection = { sIdx, iIdx };
+            renderSlides(slidesData);
+        }
+
+        function deleteImg(sIdx, iIdx) {
+            slidesData[sIdx].images.splice(iIdx, 1);
+            activeSelection = null;
+            renderSlides(slidesData);
+        }
+
+        function renderSlides(data) {
+            const container = document.getElementById('slideContainer');
+            const style = document.getElementById('styleInput').value;
+            
+            const themes = {
+                luxury: { bg: "bg-stone-50", text: "text-emerald-950", accent: "text-gold-600", deco: "bg-gold-500", border: "border-gold-500" },
+                minimal: { bg: "bg-white", text: "text-gray-800", accent: "text-emerald-600", deco: "bg-emerald-600", border: "border-gray-200" },
+                dark: { bg: "bg-emerald-950", text: "text-white", accent: "text-gold-400", deco: "bg-gold-400", border: "border-emerald-800" },
+                midnight: { bg: "bg-slate-900", text: "text-blue-50", accent: "text-cyan-400", deco: "bg-cyan-500", border: "border-cyan-900" },
+                sahara: { bg: "bg-orange-50", text: "text-amber-950", accent: "text-orange-600", deco: "bg-orange-500", border: "border-orange-200" },
+                royal: { bg: "bg-purple-900", text: "text-purple-50", accent: "text-amber-300", deco: "bg-amber-400", border: "border-purple-700" },
+                jannah: { bg: "bg-teal-50", text: "text-teal-900", accent: "text-emerald-600", deco: "bg-emerald-500", border: "border-teal-200" },
+                iftar: { bg: "bg-rose-50", text: "text-rose-950", accent: "text-rose-600", deco: "bg-rose-500", border: "border-rose-200" }
+            };
+            const th = themes[style] || themes.luxury;
+            
+            container.innerHTML = data.map((slide, i) => {
+                const align = slide.align || 'text-left';
+                
+                let bgLayer = '';
+                let bgControls = '';
+                if(slide.bgImage) {
+                    bgLayer = `<div class="layer-bg w-full h-full flex items-center justify-center overflow-hidden"><img src="${slide.bgImage}" class="w-full h-auto object-cover" style="opacity:${slide.bgOpacity||0.3}"></div>`;
+                    bgControls = `<div class="bg-control-panel"><div class="font-bold text-gray-500 mb-1">BACKGROUND</div><input type="range" min="0.1" max="1" step="0.1" value="${slide.bgOpacity||0.3}" class="w-full h-2" oninput="setBgOpacity(${i}, this.value)"><button onclick="deleteBg(${i})" class="mt-2 w-full bg-red-100 text-red-600 rounded px-2 py-1 hover:bg-red-200">HAPUS BG</button></div>`;
+                }
+
+                let freeImagesHTML = '';
+                let flowImagesHTML = '';
+
+                if(slide.images?.length) {
+                    slide.images.forEach((img, imgIdx) => {
+                        const layout = img.layout || 'right';
+                        const isActive = (activeSelection && activeSelection.sIdx === i && activeSelection.iIdx === imgIdx);
+                        const activeClass = isActive ? 'active-selection' : '';
+
+                        const toolbarHTML = `
+                            <div class="action-toolbar">
+                                <button class="tool-btn ${layout==='left'?'active-mode':''}" data-action="left">L</button>
+                                <button class="tool-btn ${layout==='center'?'active-mode':''}" data-action="center">C</button>
+                                <button class="tool-btn ${layout==='right'?'active-mode':''}" data-action="right">R</button>
+                                <button class="tool-btn ${layout==='free'?'active-mode':''}" data-action="free">Free</button>
+                                <button class="tool-btn delete" data-action="delete">X</button>
+                            </div>
+                            <div class="resize-dot"></div>
+                        `;
+
+                        if (layout === 'free') {
+                            const left = img.x !== undefined ? img.x + 'px' : '30%'; 
+                            const top = img.y !== undefined ? img.y + 'px' : '20%';
+                            freeImagesHTML += `
+                                <div class="img-container mode-free ${activeClass}" 
+                                     data-sidx="${i}" data-iidx="${imgIdx}"
+                                     style="width:${img.width}; left:${left}; top:${top};">
+                                    <img src="${img.url}" class="w-full rounded shadow-lg border-2 ${th.border} pointer-events-none">
+                                    ${toolbarHTML}
+                                </div>
+                            `;
+                        } else {
+                            flowImagesHTML += `
+                                <div class="img-container mode-${layout} ${activeClass}" 
+                                     data-sidx="${i}" data-iidx="${imgIdx}"
+                                     style="width:${img.width};">
+                                    <img src="${img.url}" class="w-full rounded shadow-lg border-2 ${th.border} pointer-events-none">
+                                    ${toolbarHTML}
+                                </div>
+                            `;
+                        }
+                    });
+                }
+
+                let content = '';
+                const baseClass = `font-serif font-bold mb-4 ${th.text} leading-tight outline-none pointer-auto relative z-20`;
+                
+                if(slide.type === 'title') {
+                    content = `<div class="layer-content w-full px-16 relative ${align}"><h1 class="text-5xl ${baseClass}" contenteditable="true" oninput="updateData(${i},'title',this.innerText)">${slide.title}</h1><div class="h-1.5 w-24 ${th.deco} mb-6 rounded-full inline-block"></div><p class="text-2xl italic opacity-90 outline-none ${th.text} pointer-auto relative z-20" contenteditable="true" oninput="updateData(${i},'subtitle',this.innerText)">${slide.subtitle||''}</p><p class="mt-8 font-bold uppercase text-sm tracking-widest outline-none ${th.text} pointer-auto relative z-20" contenteditable="true" oninput="updateData(${i},'speaker',this.innerText)">${slide.speaker||'Pembicara'}</p>${freeImagesHTML}</div>`;
+                } else if(slide.type === 'content') {
+                    // FIX BULLET: Pakai items-start + mt-2.5 di span bullet agar pas di tengah baris 1
+                    const pts = (slide.points||[]).map((p, pIdx) => `
+                        <li class="flex items-start gap-3 mb-3 group pointer-auto relative z-20">
+                            <span class="w-2 h-2 mt-2.5 rounded-full ${th.deco} flex-shrink-0"></span>
+                            <span class="flex-1 text-lg outline-none leading-relaxed" contenteditable="true" oninput="updateData(${i},'points',this.innerText,${pIdx})">${p}</span>
+                            <button onclick="removeBulletPoint(${i},${pIdx})" class="delete-point-btn">×</button>
+                        </li>
+                    `).join('');
+                    
+                    content = `
+                        <div class="layer-content w-full px-20 py-12 block">
+                            <div class="border-b-2 ${th.border} pb-4 mb-4 opacity-90 ${align} pointer-auto relative z-20">
+                                <h2 class="text-3xl ${baseClass}" contenteditable="true" oninput="updateData(${i},'title',this.innerText)">${slide.title}</h2>
+                            </div>
+                            
+                            <div class="w-full text-left relative z-20">
+                                ${flowImagesHTML}
+                                <ul class="font-light ${th.text} ${align} block">${pts}</ul>
+                            </div>
+                            
+                            <div class="mt-4 ${align} pointer-auto clear-both relative z-20">
+                                <button onclick="addBulletPoint(${i})" class="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded cursor-pointer">+ Poin</button>
+                            </div>
+                            ${freeImagesHTML}
+                        </div>`;
+                } else {
+                    content = `<div class="layer-content w-full px-12 text-center"><h2 class="${baseClass} text-4xl" contenteditable="true" oninput="updateData(${i},'title',this.innerText)">${slide.title}</h2><p class="text-xl mt-6 ${th.text} outline-none pointer-auto relative z-20" contenteditable="true" oninput="updateData(${i},'subtitle',this.innerText)">${slide.subtitle||''}</p>${freeImagesHTML}</div>`;
+                }
+
+                return `
+                <div class="slide-wrapper relative w-full max-w-4xl flex-shrink-0 group">
+                    <div class="slide-toolbar absolute top-4 -right-16 flex flex-col gap-2 z-50 pointer-auto">
+                        <button onclick="moveSlide(${i},-1)" class="sidebar-btn" title="Naik">↑</button>
+                        <button onclick="moveSlide(${i},1)" class="sidebar-btn" title="Turun">↓</button>
+                        <div class="h-px bg-gray-300 mx-2"></div>
+                        <button onclick="addSlide(${i})" class="sidebar-btn text-emerald-600" title="Tambah">+</button>
+                        <button onclick="uploadImg(${i})" class="sidebar-btn text-blue-600" title="Gambar">IMG</button>
+                        <button onclick="uploadBg(${i})" class="sidebar-btn text-purple-600" title="Background">BG</button>
+                        <div class="h-px bg-gray-300 mx-2"></div>
+                        <button onclick="setTextAlign(${i},'text-left')" class="sidebar-btn">L</button>
+                        <button onclick="setTextAlign(${i},'text-center')" class="sidebar-btn">C</button>
+                        <button onclick="setTextAlign(${i},'text-right')" class="sidebar-btn">R</button>
+                        <div class="h-px bg-gray-300 mx-2"></div>
+                        <button onclick="deleteSlide(${i})" class="sidebar-btn danger" title="Hapus">🗑️</button>
+                        ${bgControls}
+                    </div>
+                    <div class="slide w-full slide-aspect relative overflow-hidden rounded-xl shadow-2xl border border-gray-200 ${th.bg} flex flex-col justify-center px-12 py-8 ${align}">
+                        ${bgLayer}
+                        <div class="absolute top-0 right-0 w-32 h-32 opacity-10 pointer-events-none z-0"><svg viewBox="0 0 100 100" fill="currentColor" class="${th.accent}"><path d="M100 0 L100 100 Q50 50 0 0 Z"/></svg></div>
+                        <div class="absolute top-0 left-0 h-full w-3 ${th.deco} z-10"></div>
+                        ${content}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function uploadImg(idx) {
+            currentUploadIdx = idx;
+            document.getElementById('imageUploader').click();
+        }
+        
+        function handleImageUpload(e) {
+            if(!e.target.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                if(!slidesData[currentUploadIdx].images) slidesData[currentUploadIdx].images = [];
+                slidesData[currentUploadIdx].images.push({ 
+                    url: ev.target.result, 
+                    width: '300px', 
+                    layout: 'right', 
+                    x: 200, y: 150
+                });
+                activeSelection = { sIdx: currentUploadIdx, iIdx: slidesData[currentUploadIdx].images.length - 1 };
+                document.getElementById('imageUploader').value = '';
+                renderSlides(slidesData);
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
+        
+        function uploadBg(idx) { currentBgUploadIdx = idx; document.getElementById('bgUploader').click(); }
+        function handleBgUpload(e) { if(!e.target.files[0]) return; const reader = new FileReader(); reader.onload = (ev) => { slidesData[currentBgUploadIdx].bgImage = ev.target.result; slidesData[currentBgUploadIdx].bgOpacity = 0.3; slidesData[currentBgUploadIdx].bgWidth = '100%'; document.getElementById('bgUploader').value = ''; renderSlides(slidesData); }; reader.readAsDataURL(e.target.files[0]); }
+        function setBgOpacity(idx, val) { slidesData[idx].bgOpacity = val; renderSlides(slidesData); } 
+        function deleteBg(idx) { delete slidesData[idx].bgImage; renderSlides(slidesData); }
+        function setTextAlign(idx, align) { slidesData[idx].align = align; renderSlides(slidesData); }
+        function updateData(idx, key, val, subIdx=null) { if(subIdx !== null) slidesData[idx].points[subIdx] = val; else slidesData[idx][key] = val; }
+        function moveSlide(idx, dir) { const newIdx = idx + dir; if(newIdx >= 0 && newIdx < slidesData.length) { [slidesData[idx], slidesData[newIdx]] = [slidesData[newIdx], slidesData[idx]]; renderSlides(slidesData); } }
+        function addSlide(idx) { slidesData.splice(idx+1, 0, {type: 'content', title: 'Slide Baru', points: ['Klik untuk edit teks']}); renderSlides(slidesData); }
+        function deleteSlide(idx) { if(confirm('Hapus slide ini?')) { slidesData.splice(idx, 1); renderSlides(slidesData); } }
+        function addBulletPoint(idx) { if(!slidesData[idx].points) slidesData[idx].points = []; slidesData[idx].points.push("Poin baru"); renderSlides(slidesData); }
+        function removeBulletPoint(idx, ptIdx) { if(slidesData[idx].points) { slidesData[idx].points.splice(ptIdx, 1); renderSlides(slidesData); } }
+        function cleanText(str) { if (!str) return ""; return str.replace(/\*\*/g, "").replace(/\*/g, "").replace(/^[\-\*]\s+/, "").trim(); }
+
+        async function generateSlides() {
+            const topic = document.getElementById('topicInput').value;
+            const speaker = document.getElementById('speakerInput').value;
+            const count = document.getElementById('slideCountInput').value;
+            const tone = document.getElementById('toneInput').value;
+            const userKey = getApiKey();
+            
+            if(!userKey) { alert("Wajib mengisi API Key Google Gemini terlebih dahulu di menu sebelah kiri."); return; }
+            if(!topic) { alert("Mohon isi topik presentasi terlebih dahulu."); return; }
+            
+            toggleLoader(true);
+            try {
+                slidesData = await fetchAI(topic, speaker, count, tone, userKey);
+                renderSlides(slidesData);
+                document.getElementById('downloadBtn').disabled = false;
+            } catch(e) {
+                console.error("AI Error:", e);
+                alert("Gagal menghubungi AI. Pastikan API Key valid dan koneksi internet stabil.\n\nError: " + e.message);
+                document.getElementById('downloadBtn').disabled = true;
+            } finally { toggleLoader(false); }
+        }
+        function toggleLoader(show) { document.getElementById('loader').classList.toggle('hidden', !show); }
+        
+        async function fetchAI(topic, speaker, count, tone, userKey) {
+            let toneInstruction = "Use formal Indonesian.";
+            if(tone === 'khidmat') toneInstruction = "Use poetic, reflective, soft language (muhasabah style).";
+            if(tone === 'semangat') toneInstruction = "Use energetic, motivational, strong language.";
+            if(tone === 'santai') toneInstruction = "Use casual, trendy, Gen-Z friendly language.";
+            if(tone === 'ceria') toneInstruction = "Use simple, storytelling language for kids.";
+
+            const prompt = `Create ${count} slides about "${topic}" by "${speaker}". Tone: ${toneInstruction}. JSON Array only. No Markdown. Schema: [{type:"title|content|outro", title:"", subtitle:"", speaker:"", points:[""]}]. Language: Indonesian.`;
+            
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${userKey}`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error?.message || "Gagal mengakses API Google Gemini");
+            }
+
+            const data = await res.json();
+            const txt = data.candidates[0].content.parts[0].text;
+            let jsonData = JSON.parse(txt.substring(txt.indexOf('['), txt.lastIndexOf(']')+1));
+            return jsonData.map(slide => ({
+                ...slide,
+                title: cleanText(slide.title),
+                subtitle: cleanText(slide.subtitle),
+                speaker: cleanText(slide.speaker) || speaker,
+                points: slide.points ? slide.points.map(p => cleanText(p)) : []
+            }));
+        }
+
+        async function downloadPDF() {
+            const btn = document.getElementById('downloadBtn');
+            btn.innerHTML = "Memproses..."; btn.disabled = true;
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'l', unit: 'px', hotfixes: ['px_scaling'] });
+            doc.deletePage(1);
+            const slides = document.querySelectorAll('.slide');
+            for(const slide of slides) {
+                const clone = slide.cloneNode(true);
+                // FIX FONT SIZE WYSIWYG: Set width ke 896px agar sama dengan preview (max-w-4xl)
+                clone.style.width = '896px'; 
+                clone.style.height = '504px'; // 16:9 ratio of 896
+                clone.style.position = 'fixed'; clone.style.top = '0'; clone.style.left = '0'; clone.style.zIndex = '-9999';
+                
+                // Remove selection state
+                clone.querySelectorAll('.img-container').forEach(el => {
+                    el.classList.remove('active-selection');
+                });
+
+                clone.querySelectorAll('.action-toolbar, .resize-dot, .slide-toolbar, button, .bg-control-panel').forEach(el => el.remove());
+                document.body.appendChild(clone);
+                try {
+                    const canvas = await html2canvas(clone, { scale: 3, useCORS: true });
+                    const img = canvas.toDataURL('image/jpeg', 0.9);
+                    doc.addPage([canvas.width, canvas.height], 'l');
+                    doc.addImage(img, 'JPEG', 0, 0, canvas.width, canvas.height);
+                } catch(e) {}
+                document.body.removeChild(clone);
+            }
+            doc.save("Presentasi.pdf");
+            btn.innerHTML = "Ekspor PDF"; btn.disabled = false;
+        }
+
+        const textToolbar = document.getElementById('textToolbar');
+        let lastValidRange = null;
+        document.addEventListener('selectionchange', () => {
+            const selection = window.getSelection();
+            if (textToolbar.contains(document.activeElement)) return;
+            if (selection.rangeCount > 0 && !selection.isCollapsed) {
+                const range = selection.getRangeAt(0);
+                let parent = range.commonAncestorContainer.parentElement;
+                let insideSlide = false;
+                while (parent) {
+                    if (parent.classList && parent.classList.contains('slide')) { insideSlide = true; break; }
+                    parent = parent.parentElement;
+                }
+                if (insideSlide) {
+                    lastValidRange = range.cloneRange(); 
+                    const rect = range.getBoundingClientRect();
+                    showToolbar(rect);
+                    return;
+                }
+            }
+            hideToolbar();
+        });
+        function showToolbar(rect) { textToolbar.style.display = 'flex'; textToolbar.style.top = `${rect.top - 10}px`; textToolbar.style.left = `${rect.left + (rect.width / 2)}px`; textToolbar.style.transform = `translate(-50%, -100%)`; }
+        function hideToolbar() { textToolbar.style.display = 'none'; }
+        function execCmd(command, value = null) { if (lastValidRange) { const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(lastValidRange); } document.execCommand(command, false, value); }
+    </script>
+</body>
+</html>
