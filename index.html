@@ -47,6 +47,21 @@
             background-color: rgba(212, 175, 55, 0.1); 
             border-radius: 4px; padding: 2px; position: relative; z-index: 50; 
         }
+
+        /* --- CUSTOM SCROLLBAR UNTUK SLIDE --- */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(156, 163, 175, 0.5); /* Warna abu-abu transparan */
+            border-radius: 20px;
+        }
+        .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+            background-color: rgba(107, 114, 128, 0.8);
+        }
         
         /* SIDEBAR TOOLBAR */
         .slide-toolbar { opacity: 0; transition: opacity 0.2s ease-in-out; right: -60px; width: 50px; }
@@ -224,11 +239,11 @@
             <div class="space-y-2">
                 <label class="text-xs font-bold text-emerald-200 uppercase tracking-wide">Gaya Bahasa</label>
                 <select id="toneInput" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white cursor-pointer">
-                    <option value="khidmat">Khidmat & Menyentuh Hati</option>
-                    <option value="semangat">Semangat & Membakar Jiwa</option>
-                    <option value="santai">Santai & Kekinian</option>
-                    <option value="formal">Formal & Akademis</option>
-                    <option value="ceria">Ceria & Anak-anak</option>
+                    <option value="khidmat">Khidmat & Menyentuh Hati (Muhasabah Style)</option>
+                    <option value="semangat">Semangat & Membakar Jiwa (Motivational Style)</option>
+                    <option value="santai">Santai & Kekinian (Gen Z / Medsos Style)</option>
+                    <option value="formal">Formal & Akademis (Ustadz / Kajian Style)</option>
+                    <option value="ceria">Ceria & Anak-anak (Storytelling Style)</option>
                 </select>
             </div>
             <div class="space-y-2">
@@ -245,6 +260,16 @@
                         <option value="royal">Royal Purple</option>
                         <option value="jannah">Emerald Garden</option>
                         <option value="iftar">Sunset Gradient</option>
+                    </optgroup>
+                    <optgroup label="Spesial Ornamen (Eksklusif)">
+                        <option value="ornament_night">Gema Takbir (Night Skyline)</option>
+                        <option value="ornament_sunset">Cahaya Fanoos (Sunset Lanterns)</option>
+                        <option value="ornament_green">Kubah Emerald (Geometric)</option>
+                        <option value="ornament_lapis">Lapis Lazuli (Persian Night)</option>
+                        <option value="ornament_gold_silk">Golden Silk (Sutra Emas)</option>
+                        <option value="ornament_desert">Desert Mirage (Fatamorgana)</option>
+                        <option value="ornament_ray">Divine Ray (Cahaya Ilahi)</option>
+                        <option value="ornament_velvet">Velvet Moon (Bulan Beludru)</option>
                     </optgroup>
                 </select>
             </div>
@@ -438,7 +463,32 @@
             const container = document.getElementById('slideContainer');
             const style = document.getElementById('styleInput').value;
             
+            // --- PREMIUM SVG ASSETS (ENCODED FOR STABILITY) ---
+
+            const mosqueSkylineSVG = "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1440 320%27%3E%3Cpath fill=%27%23111827%27 fill-opacity=%270.6%27 d=%27M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z%27%3E%3C/path%3E%3Cpath fill=%27%23000000%27 fill-opacity=%270.8%27 d=%27M220,320 L220,200 L250,150 L280,200 L280,320 M500,320 L500,180 C500,140 580,140 580,180 L580,320 M850,320 L850,220 L870,220 L870,320 M1100,320 L1100,200 A50,50 0 0,1 1200,200 L1200,320%27/%3E%3C/svg%3E";
+            
+            const hangingLanternsSVG = "data:image/svg+xml,%3Csvg width=%27800%27 height=%27200%27 viewBox=%270 0 800 200%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cg fill=%27%2378350f%27 stroke=%27%2378350f%27%3E%3Cline x1=%27100%27 y1=%270%27 x2=%27100%27 y2=%27100%27 stroke-width=%272%27/%3E%3Crect x=%2785%27 y=%27100%27 width=%2730%27 height=%2750%27 rx=%275%27/%3E%3Ccircle cx=%27100%27 cy=%27125%27 r=%278%27 fill=%27%23fbbf24%27/%3E%3Cline x1=%27300%27 y1=%270%27 x2=%27300%27 y2=%2760%27 stroke-width=%272%27/%3E%3Crect x=%27290%27 y=%2760%27 width=%2720%27 height=%2730%27 rx=%273%27/%3E%3Ccircle cx=%27300%27 cy=%2775%27 r=%275%27 fill=%27%23fbbf24%27/%3E%3Cline x1=%27500%27 y1=%270%27 x2=%27500%27 y2=%27120%27 stroke-width=%272%27/%3E%3Crect x=%27480%27 y=%27120%27 width=%2740%27 height=%2760%27 rx=%275%27/%3E%3Ccircle cx=%27500%27 cy=%27150%27 r=%2710%27 fill=%27%23fbbf24%27/%3E%3Cline x1=%27700%27 y1=%270%27 x2=%27700%27 y2=%2780%27 stroke-width=%272%27/%3E%3Crect x=%27685%27 y=%2780%27 width=%2730%27 height=%2740%27 rx=%274%27/%3E%3Ccircle cx=%27700%27 cy=%27100%27 r=%276%27 fill=%27%23fbbf24%27/%3E%3C/g%3E%3C/svg%3E";
+            
+            const geoPatternSVG = "data:image/svg+xml,%3Csvg width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cpath d=%27M20 0 L40 20 L20 40 L0 20 Z%27 fill=%27none%27 stroke=%27%2334d399%27 stroke-width=%270.5%27 opacity=%270.3%27/%3E%3Ccircle cx=%2720%27 cy=%2720%27 r=%278%27 fill=%27none%27 stroke=%27%2334d399%27 stroke-width=%270.5%27 opacity=%270.3%27/%3E%3C/svg%3E";
+
+            // 1. Lapis Lazuli Pattern
+            const lapisPatternSVG = "data:image/svg+xml,%3Csvg width=%2760%27 height=%2760%27 viewBox=%270 0 60 60%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cg fill=%27none%27 fill-rule=%27evenodd%27%3E%3Cg fill=%27%23eab308%27 fill-opacity=%270.1%27%3E%3Cpath d=%27M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6z%27/%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
+
+            // 2. Golden Silk Mandala Corner
+            const goldMandalaSVG = "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27400%27 viewBox=%270 0 400 400%27%3E%3Cpath fill=%27%23b45309%27 fill-opacity=%270.2%27 d=%27M0,0 L200,0 C100,0 0,100 0,200 Z%27/%3E%3Ccircle cx=%270%27 cy=%270%27 r=%27150%27 fill=%27none%27 stroke=%27%23d97706%27 stroke-width=%272%27 stroke-dasharray=%275,5%27 opacity=%270.5%27/%3E%3Cpath fill=%27none%27 stroke=%27%23d97706%27 stroke-width=%271%27 d=%27M0,0 L300,0 M0,0 L0,300%27 opacity=%270.3%27/%3E%3C/svg%3E";
+
+            // 3. Desert Mirage Dunes
+            const dunesSVG = "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1440 320%27%3E%3Cpath fill=%27%23a16207%27 fill-opacity=%270.4%27 d=%27M0,256L48,245.3C96,235,192,213,288,218.7C384,224,480,256,576,245.3C672,235,768,181,864,170.7C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z%27%3E%3C/path%3E%3Cpath fill=%27%23713f12%27 fill-opacity=%270.6%27 d=%27M0,288L60,277.3C120,267,240,245,360,250.7C480,256,600,288,720,277.3C840,267,960,213,1080,202.7C1200,192,1320,224,1380,240L1440,256L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z%27%3E%3C/path%3E%3C/svg%3E";
+
+            // 4. Divine Ray (Light Beams)
+            const raysSVG = "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27600%27 viewBox=%270 0 800 600%27%3E%3Cdefs%3E%3CradialGradient id=%27grad1%27 cx=%2750%25%27 cy=%270%25%27 r=%2770%25%27%3E%3Cstop offset=%270%25%27 style=%27stop-color:white;stop-opacity:0.2%27 /%3E%3Cstop offset=%27100%25%27 style=%27stop-color:white;stop-opacity:0%27 /%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d=%27M350,0 L450,0 L550,600 L250,600 Z%27 fill=%27url(%23grad1)%27 opacity=%270.5%27/%3E%3C/svg%3E";
+            
+            // 5. Velvet Moon Watermark
+            const bigMoonSVG = "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Cpath fill=%27%23ffffff%27 fill-opacity=%270.05%27 d=%27M100,20 A80,80 0 1,0 100,180 A60,60 0 1,1 100,20 Z%27/%3E%3C/svg%3E";
+
+
             const themes = {
+                // Existing
                 luxury: { bg: "bg-stone-50", text: "text-emerald-950", accent: "text-gold-600", deco: "bg-gold-500", border: "border-gold-500" },
                 minimal: { bg: "bg-white", text: "text-gray-800", accent: "text-emerald-600", deco: "bg-emerald-600", border: "border-gray-200" },
                 dark: { bg: "bg-emerald-950", text: "text-white", accent: "text-gold-400", deco: "bg-gold-400", border: "border-emerald-800" },
@@ -446,7 +496,61 @@
                 sahara: { bg: "bg-orange-50", text: "text-amber-950", accent: "text-orange-600", deco: "bg-orange-500", border: "border-orange-200" },
                 royal: { bg: "bg-purple-900", text: "text-purple-50", accent: "text-amber-300", deco: "bg-amber-400", border: "border-purple-700" },
                 jannah: { bg: "bg-teal-50", text: "text-teal-900", accent: "text-emerald-600", deco: "bg-emerald-500", border: "border-teal-200" },
-                iftar: { bg: "bg-rose-50", text: "text-rose-950", accent: "text-rose-600", deco: "bg-rose-500", border: "border-rose-200" }
+                iftar: { bg: "bg-rose-50", text: "text-rose-950", accent: "text-rose-600", deco: "bg-rose-500", border: "border-rose-200" },
+                
+                // --- KATEGORI SPESIAL ORNAMEN (PREMIUM + DYNAMIC) ---
+                
+                // 1. Gema Takbir (Night Skyline) - Asymmetric bottom heavy
+                ornament_night: { 
+                    bg: "bg-slate-900", 
+                    customStyle: `background: url('${mosqueSkylineSVG}') bottom center repeat-x, linear-gradient(135deg, #0f172a 0%, #312e81 100%); background-size: 100% auto, cover; background-blend-mode: overlay;`,
+                    text: "text-blue-50", accent: "text-yellow-400", deco: "bg-yellow-400", border: "border-blue-800" 
+                },
+                // 2. Cahaya Fanoos (Sunset Lanterns) - Asymmetric top heavy
+                ornament_sunset: { 
+                    bg: "bg-orange-50", 
+                    customStyle: `background: url('${hangingLanternsSVG}') top left repeat-x, linear-gradient(180deg, #fff7ed 0%, #fed7aa 100%); background-size: auto 180px, cover;`,
+                    text: "text-amber-900", accent: "text-orange-600", deco: "bg-orange-500", border: "border-amber-900" 
+                },
+                // 3. Kubah Emerald (Geometric) - Center Radial focus
+                ornament_green: { 
+                    bg: "bg-emerald-900", 
+                    customStyle: `background: url('${geoPatternSVG}'), radial-gradient(circle at 50% 50%, #10b981 0%, #064e3b 80%); background-size: 100px 100px, cover; background-blend-mode: soft-light;`,
+                    text: "text-emerald-50", accent: "text-emerald-300", deco: "bg-emerald-400", border: "border-emerald-600" 
+                },
+
+                // --- 5 TEMA BARU (HIGH VALUE) ---
+
+                // 4. Lapis Lazuli (Persian Night) - Vibrant Blue/Gold, Tiled pattern subtle
+                ornament_lapis: {
+                    bg: "bg-blue-900",
+                    customStyle: `background: url('${lapisPatternSVG}'), linear-gradient(135deg, #1e3a8a 0%, #172554 100%); background-size: 60px 60px, cover; background-blend-mode: overlay;`,
+                    text: "text-yellow-50", accent: "text-yellow-400", deco: "bg-yellow-500", border: "border-yellow-600"
+                },
+                // 5. Golden Silk (Sutra Emas) - Clean, Minimalist Luxury, Corner ornaments
+                ornament_gold_silk: {
+                    bg: "bg-stone-50",
+                    customStyle: `background: url('${goldMandalaSVG}') top right no-repeat, url('${goldMandalaSVG}') bottom left no-repeat, linear-gradient(to bottom right, #fafaf9, #f5f5f4); background-size: 250px 250px, 250px 250px, cover; transform: rotate(0deg);`, 
+                    text: "text-stone-800", accent: "text-amber-600", deco: "bg-amber-500", border: "border-amber-300"
+                },
+                // 6. Desert Mirage (Fatamorgana) - Warm, Organic curves at bottom
+                ornament_desert: {
+                    bg: "bg-orange-100",
+                    customStyle: `background: url('${dunesSVG}') bottom center no-repeat, linear-gradient(180deg, #ffedd5 0%, #fb923c 100%); background-size: 100% auto, cover;`,
+                    text: "text-amber-950", accent: "text-orange-800", deco: "bg-orange-700", border: "border-orange-300"
+                },
+                // 7. Divine Ray (Cahaya Ilahi) - Asymmetric lighting from top center
+                ornament_ray: {
+                    bg: "bg-teal-950",
+                    customStyle: `background: url('${raysSVG}') top center no-repeat, linear-gradient(to bottom, #115e59, #042f2e); background-size: 100% 80%, cover; background-blend-mode: screen;`,
+                    text: "text-teal-50", accent: "text-teal-200", deco: "bg-teal-400", border: "border-teal-600"
+                },
+                // 8. Velvet Moon (Bulan Beludru) - Deep Maroon, Big Watermark
+                ornament_velvet: {
+                    bg: "bg-red-950",
+                    customStyle: `background: url('${bigMoonSVG}') center right no-repeat, linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%); background-size: 80% 80%, cover;`,
+                    text: "text-rose-50", accent: "text-rose-300", deco: "bg-rose-500", border: "border-rose-800"
+                }
             };
             const th = themes[style] || themes.luxury;
             
@@ -507,10 +611,23 @@
                 let content = '';
                 const baseClass = `font-serif font-bold mb-4 ${th.text} leading-tight outline-none pointer-auto relative z-20`;
                 
+                // Determine slide style (Safe attribute quoting)
+                // We use double quotes for the attribute value: style="..."
+                // We use single quotes for URL strings in CSS: url('...')
+                // We replaced single quotes in SVG data with %27 to prevent conflicts
+                const slideStyleAttr = th.customStyle ? `style="${th.customStyle}"` : '';
+                const slideBgClass = th.customStyle ? '' : th.bg;
+
                 if(slide.type === 'title') {
-                    content = `<div class="layer-content w-full px-16 relative ${align}"><h1 class="text-5xl ${baseClass}" contenteditable="true" oninput="updateData(${i},'title',this.innerText)">${slide.title}</h1><div class="h-1.5 w-24 ${th.deco} mb-6 rounded-full inline-block"></div><p class="text-2xl italic opacity-90 outline-none ${th.text} pointer-auto relative z-20" contenteditable="true" oninput="updateData(${i},'subtitle',this.innerText)">${slide.subtitle||''}</p><p class="mt-8 font-bold uppercase text-sm tracking-widest outline-none ${th.text} pointer-auto relative z-20" contenteditable="true" oninput="updateData(${i},'speaker',this.innerText)">${slide.speaker||'Pembicara'}</p>${freeImagesHTML}</div>`;
+                    content = `<div class="layer-content w-full px-16 relative ${align}">
+                        ${flowImagesHTML}
+                        <h1 class="text-5xl ${baseClass}" contenteditable="true" oninput="updateData(${i},'title',this.innerText)">${slide.title}</h1>
+                        <div class="h-1.5 w-24 ${th.deco} mb-6 rounded-full inline-block"></div>
+                        <p class="text-2xl italic opacity-90 outline-none ${th.text} pointer-auto relative z-20" contenteditable="true" oninput="updateData(${i},'subtitle',this.innerText)">${slide.subtitle||''}</p>
+                        <p class="mt-8 font-bold uppercase text-sm tracking-widest outline-none ${th.text} pointer-auto relative z-20" contenteditable="true" oninput="updateData(${i},'speaker',this.innerText)">${slide.speaker||'Pembicara'}</p>
+                        ${freeImagesHTML}
+                    </div>`;
                 } else if(slide.type === 'content') {
-                    // FIX BULLET: Pakai items-start + mt-2.5 di span bullet agar pas di tengah baris 1
                     const pts = (slide.points||[]).map((p, pIdx) => `
                         <li class="flex items-start gap-3 mb-3 group pointer-auto relative z-20">
                             <span class="w-2 h-2 mt-2.5 rounded-full ${th.deco} flex-shrink-0"></span>
@@ -530,13 +647,21 @@
                                 <ul class="font-light ${th.text} ${align} block">${pts}</ul>
                             </div>
                             
-                            <div class="mt-4 ${align} pointer-auto clear-both relative z-20">
-                                <button onclick="addBulletPoint(${i})" class="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded cursor-pointer">+ Poin</button>
+                            <div class="mt-4 ${align} pointer-auto clear-both relative z-20 flex gap-2 ${align === 'text-center' ? 'justify-center' : ''} ${align === 'text-right' ? 'justify-end' : ''}">
+                                <button onclick="addBulletPoint(${i})" class="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded cursor-pointer transition shadow-sm border border-gray-200">+ Poin</button>
+                                <button onclick="addAiBulletPoint(${i}, this)" class="text-sm px-3 py-1 bg-gradient-to-r from-emerald-100 to-emerald-200 hover:from-emerald-200 hover:to-emerald-300 text-emerald-800 rounded cursor-pointer flex items-center gap-1 transition shadow-sm border border-emerald-300">
+                                    <span>✨</span> AI Poin
+                                </button>
                             </div>
                             ${freeImagesHTML}
                         </div>`;
                 } else {
-                    content = `<div class="layer-content w-full px-12 text-center"><h2 class="${baseClass} text-4xl" contenteditable="true" oninput="updateData(${i},'title',this.innerText)">${slide.title}</h2><p class="text-xl mt-6 ${th.text} outline-none pointer-auto relative z-20" contenteditable="true" oninput="updateData(${i},'subtitle',this.innerText)">${slide.subtitle||''}</p>${freeImagesHTML}</div>`;
+                    content = `<div class="layer-content w-full px-12 text-center relative z-20">
+                        ${flowImagesHTML}
+                        <h2 class="${baseClass} text-4xl" contenteditable="true" oninput="updateData(${i},'title',this.innerText)">${slide.title}</h2>
+                        <p class="text-xl mt-6 ${th.text} outline-none pointer-auto relative z-20" contenteditable="true" oninput="updateData(${i},'subtitle',this.innerText)">${slide.subtitle||''}</p>
+                        ${freeImagesHTML}
+                    </div>`;
                 }
 
                 return `
@@ -556,9 +681,8 @@
                         <button onclick="deleteSlide(${i})" class="sidebar-btn danger" title="Hapus">🗑️</button>
                         ${bgControls}
                     </div>
-                    <div class="slide w-full slide-aspect relative overflow-hidden rounded-xl shadow-2xl border border-gray-200 ${th.bg} flex flex-col justify-center px-12 py-8 ${align}">
+                    <div class="slide w-full slide-aspect relative overflow-y-auto custom-scrollbar rounded-xl shadow-2xl border border-gray-200 ${slideBgClass} flex flex-col justify-center px-12 py-8 ${align}" ${slideStyleAttr}>
                         ${bgLayer}
-                        <div class="absolute top-0 right-0 w-32 h-32 opacity-10 pointer-events-none z-0"><svg viewBox="0 0 100 100" fill="currentColor" class="${th.accent}"><path d="M100 0 L100 100 Q50 50 0 0 Z"/></svg></div>
                         <div class="absolute top-0 left-0 h-full w-3 ${th.deco} z-10"></div>
                         ${content}
                     </div>
@@ -601,6 +725,54 @@
         function addBulletPoint(idx) { if(!slidesData[idx].points) slidesData[idx].points = []; slidesData[idx].points.push("Poin baru"); renderSlides(slidesData); }
         function removeBulletPoint(idx, ptIdx) { if(slidesData[idx].points) { slidesData[idx].points.splice(ptIdx, 1); renderSlides(slidesData); } }
         function cleanText(str) { if (!str) return ""; return str.replace(/\*\*/g, "").replace(/\*/g, "").replace(/^[\-\*]\s+/, "").trim(); }
+
+        // --- NEW AI BULLET POINT FUNCTION ---
+        async function addAiBulletPoint(idx, btn) {
+            const userKey = getApiKey();
+            if(!userKey) { alert("Wajib mengisi API Key Google Gemini terlebih dahulu di menu sebelah kiri untuk menggunakan fitur ini."); return; }
+            
+            const slide = slidesData[idx];
+            const originalText = btn.innerHTML;
+            
+            // Set Loading State
+            btn.innerHTML = `<svg class="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Mikir...`;
+            btn.disabled = true;
+
+            try {
+                // Construct Context-Aware Prompt
+                const prompt = `Context: A presentation slide about "${slide.title}". 
+                Existing bullet points: ${JSON.stringify(slide.points)}. 
+                Task: Generate exactly ONE new, relevant, short bullet point (max 15 words) that fits the context and flow. 
+                Tone: Match the existing points. Language: Indonesian. 
+                Output: Just the plain text of the bullet point, no markdown, no bullets.`;
+
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${userKey}`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error?.message || "API Error");
+                }
+                
+                const data = await res.json();
+                let newPoint = data.candidates[0].content.parts[0].text.trim();
+                
+                // Cleanup if AI adds a dash or dot at start
+                newPoint = newPoint.replace(/^[\-\*•]\s*/, '').replace(/^"\s*/, '').replace(/"\s*$/, '');
+
+                if(!slidesData[idx].points) slidesData[idx].points = [];
+                slidesData[idx].points.push(newPoint);
+                renderSlides(slidesData);
+
+            } catch(e) {
+                console.error(e);
+                alert("Gagal membuat poin AI. " + e.message);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
 
         async function generateSlides() {
             const topic = document.getElementById('topicInput').value;
