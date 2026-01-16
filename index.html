@@ -38,7 +38,7 @@
     <style>
         .islamic-pattern {
             background-color: #f8fafc;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
         .slide-aspect { aspect-ratio: 16 / 9; }
         
@@ -222,15 +222,15 @@
 
             <div class="space-y-2">
                 <label class="text-xs font-bold text-emerald-200 uppercase tracking-wide">Topik</label>
-                <input type="text" id="topicInput" placeholder="Contoh: Keutamaan Ramadan" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-gold-500">
+                <input type="text" id="topicInput" placeholder="Contoh: Keutamaan Ramadan" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-gold-500" oninput="debounceSave()">
             </div>
             <div class="space-y-2">
                 <label class="text-xs font-bold text-emerald-200 uppercase tracking-wide">Pembicara</label>
-                <input type="text" id="speakerInput" placeholder="Contoh: Ustadz Ahmad" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-gold-500">
+                <input type="text" id="speakerInput" placeholder="Contoh: Ustadz Ahmad" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-gold-500" oninput="debounceSave()">
             </div>
              <div class="space-y-2">
                 <label class="text-xs font-bold text-emerald-200 uppercase tracking-wide">Jumlah Slide</label>
-                <select id="slideCountInput" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white cursor-pointer">
+                <select id="slideCountInput" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white cursor-pointer" onchange="saveWork()">
                     <option value="5">5 Slide</option>
                     <option value="7">7 Slide</option>
                     <option value="10">10 Slide</option>
@@ -238,7 +238,7 @@
             </div>
             <div class="space-y-2">
                 <label class="text-xs font-bold text-emerald-200 uppercase tracking-wide">Gaya Bahasa</label>
-                <select id="toneInput" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white cursor-pointer">
+                <select id="toneInput" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white cursor-pointer" onchange="saveWork()">
                     <option value="khidmat">Khidmat & Menyentuh Hati (Muhasabah Style)</option>
                     <option value="semangat">Semangat & Membakar Jiwa (Motivational Style)</option>
                     <option value="santai">Santai & Kekinian (Gen Z / Medsos Style)</option>
@@ -248,7 +248,7 @@
             </div>
             <div class="space-y-2">
                 <label class="text-xs font-bold text-emerald-200 uppercase tracking-wide">Tema Visual</label>
-                <select id="styleInput" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white cursor-pointer" onchange="renderSlides(slidesData)">
+                <select id="styleInput" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white cursor-pointer" onchange="renderSlides(slidesData); saveWork()">
                     <optgroup label="Klasik">
                         <option value="luxury">Mewah Islami</option>
                         <option value="minimal">Minimalis</option>
@@ -277,6 +277,7 @@
         <div class="p-6 bg-emerald-950 border-t border-emerald-900 space-y-3">
             <button onclick="generateSlides()" id="generateBtn" class="w-full bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 text-emerald-950 font-bold py-3.5 px-4 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">Buat Slide AI</button>
             <button onclick="downloadPDF()" id="downloadBtn" disabled class="w-full border border-emerald-700 text-emerald-300 hover:bg-emerald-900/50 py-3 rounded-lg disabled:opacity-50">Ekspor PDF</button>
+            <button onclick="resetWork()" id="resetBtn" class="w-full border border-red-700 text-red-400 hover:bg-red-900/30 py-3 rounded-lg mt-2 transition text-sm">Reset / Mulai Ulang</button>
         </div>
     </aside>
 
@@ -288,6 +289,7 @@
           
         <div class="h-16 bg-white border-b flex items-center justify-between px-6 shadow-sm z-30 relative">
             <h2 class="text-gray-600 font-bold">Pratinjau Slide</h2>
+            <div id="saveIndicator" class="text-xs text-gray-400 italic hidden">Tersimpan otomatis</div>
         </div>
         
         <div id="slideContainer" class="flex-1 overflow-y-auto pl-8 pr-28 py-8 space-y-12 flex flex-col items-center islamic-pattern pb-32 relative z-10"></div>
@@ -309,12 +311,13 @@
         let dragTarget = null; 
         let dragStartData = {}; 
 
-        // --- INIT API KEY ---
+        // --- INIT API KEY & LOCAL STORAGE ---
         window.onload = function() {
             const savedKey = localStorage.getItem('gemini_api_key');
             if(savedKey) {
                 document.getElementById('apiKeyInput').value = savedKey;
             }
+            loadWork();
         };
 
         function saveApiKey(val) {
@@ -328,6 +331,67 @@
 
         function getApiKey() {
             return document.getElementById('apiKeyInput').value.trim();
+        }
+
+        // --- STORAGE FUNCTIONS ---
+        let saveTimer;
+        function debounceSave() {
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(saveWork, 1000); // Tunggu 1 detik sebelum simpan
+        }
+
+        function saveWork() {
+            try {
+                localStorage.setItem('ramadan_topic', document.getElementById('topicInput').value);
+                localStorage.setItem('ramadan_speaker', document.getElementById('speakerInput').value);
+                localStorage.setItem('ramadan_count', document.getElementById('slideCountInput').value);
+                localStorage.setItem('ramadan_tone', document.getElementById('toneInput').value);
+                localStorage.setItem('ramadan_style', document.getElementById('styleInput').value);
+                localStorage.setItem('ramadan_slides', JSON.stringify(slidesData));
+                
+                // Show simple save indicator
+                const indicator = document.getElementById('saveIndicator');
+                if(indicator) {
+                    indicator.classList.remove('hidden');
+                    setTimeout(() => indicator.classList.add('hidden'), 2000);
+                }
+            } catch (e) {
+                console.warn("Penyimpanan penuh atau error:", e);
+            }
+        }
+
+        function loadWork() {
+            if(localStorage.getItem('ramadan_topic')) document.getElementById('topicInput').value = localStorage.getItem('ramadan_topic');
+            if(localStorage.getItem('ramadan_speaker')) document.getElementById('speakerInput').value = localStorage.getItem('ramadan_speaker');
+            if(localStorage.getItem('ramadan_count')) document.getElementById('slideCountInput').value = localStorage.getItem('ramadan_count');
+            if(localStorage.getItem('ramadan_tone')) document.getElementById('toneInput').value = localStorage.getItem('ramadan_tone');
+            if(localStorage.getItem('ramadan_style')) document.getElementById('styleInput').value = localStorage.getItem('ramadan_style');
+            
+            const savedSlides = localStorage.getItem('ramadan_slides');
+            if(savedSlides) {
+                try {
+                    slidesData = JSON.parse(savedSlides);
+                    if(slidesData.length > 0) {
+                        renderSlides(slidesData);
+                        document.getElementById('downloadBtn').disabled = false;
+                    }
+                } catch(e) {
+                    console.error("Gagal memuat slide tersimpan:", e);
+                }
+            }
+        }
+
+        function resetWork() {
+            if(confirm("Apakah Anda yakin ingin menghapus semua pekerjaan dan memulai dari awal? Data yang tersimpan akan hilang.")) {
+                localStorage.removeItem('ramadan_topic');
+                localStorage.removeItem('ramadan_speaker');
+                localStorage.removeItem('ramadan_count');
+                localStorage.removeItem('ramadan_tone');
+                localStorage.removeItem('ramadan_style');
+                localStorage.removeItem('ramadan_slides');
+                // Kita tidak menghapus API key agar user tidak perlu input ulang
+                location.reload();
+            }
         }
 
         // --- MANAJEMEN SELEKSI ---
@@ -440,6 +504,7 @@
             }
             dragMode = null;
             dragTarget = null;
+            saveWork(); // Simpan setelah resize/move
         }
 
         function changeLayout(sIdx, iIdx, layout) {
@@ -451,12 +516,14 @@
             }
             activeSelection = { sIdx, iIdx };
             renderSlides(slidesData);
+            saveWork();
         }
 
         function deleteImg(sIdx, iIdx) {
             slidesData[sIdx].images.splice(iIdx, 1);
             activeSelection = null;
             renderSlides(slidesData);
+            saveWork();
         }
 
         function renderSlides(data) {
@@ -709,21 +776,26 @@
                 activeSelection = { sIdx: currentUploadIdx, iIdx: slidesData[currentUploadIdx].images.length - 1 };
                 document.getElementById('imageUploader').value = '';
                 renderSlides(slidesData);
+                saveWork(); // Simpan setelah upload
             };
             reader.readAsDataURL(e.target.files[0]);
         }
         
         function uploadBg(idx) { currentBgUploadIdx = idx; document.getElementById('bgUploader').click(); }
-        function handleBgUpload(e) { if(!e.target.files[0]) return; const reader = new FileReader(); reader.onload = (ev) => { slidesData[currentBgUploadIdx].bgImage = ev.target.result; slidesData[currentBgUploadIdx].bgOpacity = 0.3; slidesData[currentBgUploadIdx].bgWidth = '100%'; document.getElementById('bgUploader').value = ''; renderSlides(slidesData); }; reader.readAsDataURL(e.target.files[0]); }
-        function setBgOpacity(idx, val) { slidesData[idx].bgOpacity = val; renderSlides(slidesData); } 
-        function deleteBg(idx) { delete slidesData[idx].bgImage; renderSlides(slidesData); }
-        function setTextAlign(idx, align) { slidesData[idx].align = align; renderSlides(slidesData); }
-        function updateData(idx, key, val, subIdx=null) { if(subIdx !== null) slidesData[idx].points[subIdx] = val; else slidesData[idx][key] = val; }
-        function moveSlide(idx, dir) { const newIdx = idx + dir; if(newIdx >= 0 && newIdx < slidesData.length) { [slidesData[idx], slidesData[newIdx]] = [slidesData[newIdx], slidesData[idx]]; renderSlides(slidesData); } }
-        function addSlide(idx) { slidesData.splice(idx+1, 0, {type: 'content', title: 'Slide Baru', points: ['Klik untuk edit teks']}); renderSlides(slidesData); }
-        function deleteSlide(idx) { if(confirm('Hapus slide ini?')) { slidesData.splice(idx, 1); renderSlides(slidesData); } }
-        function addBulletPoint(idx) { if(!slidesData[idx].points) slidesData[idx].points = []; slidesData[idx].points.push("Poin baru"); renderSlides(slidesData); }
-        function removeBulletPoint(idx, ptIdx) { if(slidesData[idx].points) { slidesData[idx].points.splice(ptIdx, 1); renderSlides(slidesData); } }
+        function handleBgUpload(e) { if(!e.target.files[0]) return; const reader = new FileReader(); reader.onload = (ev) => { slidesData[currentBgUploadIdx].bgImage = ev.target.result; slidesData[currentBgUploadIdx].bgOpacity = 0.3; slidesData[currentBgUploadIdx].bgWidth = '100%'; document.getElementById('bgUploader').value = ''; renderSlides(slidesData); saveWork(); }; reader.readAsDataURL(e.target.files[0]); }
+        function setBgOpacity(idx, val) { slidesData[idx].bgOpacity = val; renderSlides(slidesData); saveWork(); } 
+        function deleteBg(idx) { delete slidesData[idx].bgImage; renderSlides(slidesData); saveWork(); }
+        function setTextAlign(idx, align) { slidesData[idx].align = align; renderSlides(slidesData); saveWork(); }
+        function updateData(idx, key, val, subIdx=null) { 
+            if(subIdx !== null) slidesData[idx].points[subIdx] = val; 
+            else slidesData[idx][key] = val;
+            debounceSave(); // Simpan dengan delay untuk edit teks
+        }
+        function moveSlide(idx, dir) { const newIdx = idx + dir; if(newIdx >= 0 && newIdx < slidesData.length) { [slidesData[idx], slidesData[newIdx]] = [slidesData[newIdx], slidesData[idx]]; renderSlides(slidesData); saveWork(); } }
+        function addSlide(idx) { slidesData.splice(idx+1, 0, {type: 'content', title: 'Slide Baru', points: ['Klik untuk edit teks']}); renderSlides(slidesData); saveWork(); }
+        function deleteSlide(idx) { if(confirm('Hapus slide ini?')) { slidesData.splice(idx, 1); renderSlides(slidesData); saveWork(); } }
+        function addBulletPoint(idx) { if(!slidesData[idx].points) slidesData[idx].points = []; slidesData[idx].points.push("Poin baru"); renderSlides(slidesData); saveWork(); }
+        function removeBulletPoint(idx, ptIdx) { if(slidesData[idx].points) { slidesData[idx].points.splice(ptIdx, 1); renderSlides(slidesData); saveWork(); } }
         function cleanText(str) { if (!str) return ""; return str.replace(/\*\*/g, "").replace(/\*/g, "").replace(/^[\-\*]\s+/, "").trim(); }
 
         // --- NEW AI BULLET POINT FUNCTION ---
@@ -765,6 +837,7 @@
                 if(!slidesData[idx].points) slidesData[idx].points = [];
                 slidesData[idx].points.push(newPoint);
                 renderSlides(slidesData);
+                saveWork();
 
             } catch(e) {
                 console.error(e);
@@ -788,6 +861,7 @@
             try {
                 slidesData = await fetchAI(topic, speaker, count, tone, userKey);
                 renderSlides(slidesData);
+                saveWork(); // Simpan hasil generate
                 document.getElementById('downloadBtn').disabled = false;
             } catch(e) {
                 console.error("AI Error:", e);
