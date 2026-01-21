@@ -223,6 +223,59 @@
             <div class="space-y-2">
                 <label class="text-xs font-bold text-emerald-200 uppercase tracking-wide">Topik</label>
                 <input type="text" id="topicInput" placeholder="Contoh: Keutamaan Ramadan" class="w-full bg-emerald-900/80 border border-emerald-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-gold-500" oninput="debounceSave()">
+                <select onchange="document.getElementById('topicInput').value=this.value; debounceSave();" class="w-full bg-emerald-950/50 border border-emerald-800 rounded p-2 text-xs text-emerald-400 cursor-pointer hover:bg-emerald-900/80 transition-colors mt-2">
+                    <option value="">💡 50 Topik Populer (Pilih Disini)</option>
+                    <option value="Marhaban Ya Ramadan: Menyambut Tamu Agung">1. Menyambut Tamu Agung</option>
+                    <option value="Keutamaan Bulan Ramadan">2. Keutamaan Bulan Ramadan</option>
+                    <option value="Fiqih Puasa: Syarat dan Rukun">3. Fiqih Puasa: Syarat & Rukun</option>
+                    <option value="Hal-hal yang Membatalkan Puasa">4. Pembatal Puasa</option>
+                    <option value="Amalan Sunnah di Bulan Ramadan">5. Amalan Sunnah Ramadan</option>
+                    <option value="Tadarus Al-Qur'an: Menghidupkan Malam Ramadan">6. Tadarus Al-Qur'an</option>
+                    <option value="Keistimewaan Lailatul Qadar">7. Keistimewaan Lailatul Qadar</option>
+                    <option value="Tanda-tanda Lailatul Qadar">8. Tanda-tanda Lailatul Qadar</option>
+                    <option value="I'tikaf: Meraih Puncak Ramadan">9. I'tikaf Meraih Puncak</option>
+                    <option value="Zakat Fitrah: Penyempurna Puasa">10. Zakat Fitrah</option>
+                    <option value="Sedekah di Bulan Ramadan">11. Keajaiban Sedekah</option>
+                    <option value="Puasa dan Kesehatan Fisik">12. Puasa & Kesehatan Fisik</option>
+                    <option value="Puasa dan Kesehatan Mental">13. Puasa & Kesehatan Mental</option>
+                    <option value="Manajemen Waktu di Bulan Ramadan">14. Manajemen Waktu Ramadan</option>
+                    <option value="Tips Khatam Al-Qur'an di Bulan Ramadan">15. Tips Khatam Al-Qur'an</option>
+                    <option value="Keutamaan Shalat Tarawih">16. Keutamaan Shalat Tarawih</option>
+                    <option value="Sejarah Perang Badar di Bulan Ramadan">17. Sejarah Perang Badar</option>
+                    <option value="Fathu Makkah: Kemenangan di Bulan Ramadan">18. Fathu Makkah</option>
+                    <option value="Nuzulul Qur'an: Sejarah Turunnya Al-Qur'an">19. Nuzulul Qur'an</option>
+                    <option value="Menjaga Lisan Saat Berpuasa">20. Menjaga Lisan Saat Puasa</option>
+                    <option value="Bahaya Ghibah Menggerogoti Pahala Puasa">21. Bahaya Ghibah</option>
+                    <option value="Puasa Orang Sakit dan Musafir">22. Puasa Orang Sakit/Musafir</option>
+                    <option value="Membayar Fidyah dan Qadha Puasa">23. Fidyah & Qadha Puasa</option>
+                    <option value="Adab Berbuka Puasa dan Sahur">24. Adab Buka & Sahur</option>
+                    <option value="Keberkahan Makan Sahur">25. Keberkahan Sahur</option>
+                    <option value="Menyegerakan Berbuka: Sunnah Nabi">26. Sunnah Menyegerakan Buka</option>
+                    <option value="Ramadan Bulan Taubat">27. Ramadan Bulan Taubat</option>
+                    <option value="Membangun Keluarga Sakinah di Bulan Ramadan">28. Keluarga Sakinah saat Ramadan</option>
+                    <option value="Mendidik Anak Berpuasa Sejak Dini">29. Mendidik Anak Berpuasa</option>
+                    <option value="Peran Wanita di Bulan Ramadan">30. Peran Wanita di Ramadan</option>
+                    <option value="Ramadan dan Kepedulian Sosial">31. Kepedulian Sosial</option>
+                    <option value="Menahan Hawa Nafsu (Jihad Akbar)">32. Jihad Melawan Nafsu</option>
+                    <option value="Sabar: Buah Manis Puasa">33. Sabar Buah Puasa</option>
+                    <option value="Syukur atas Nikmat Iman dan Islam">34. Syukur Nikmat Iman</option>
+                    <option value="Hikmah Lapar dan Dahaga">35. Hikmah Lapar Dahaga</option>
+                    <option value="Golongan yang Merugi di Bulan Ramadan">36. Golongan Merugi</option>
+                    <option value="Tips Agar Tidak Lemas Saat Puasa">37. Tips Kuat Puasa</option>
+                    <option value="Menu Sehat untuk Sahur dan Buka">38. Menu Sehat Sahur/Buka</option>
+                    <option value="Puasa 6 Hari di Bulan Syawal">39. Puasa Syawal</option>
+                    <option value="Makna Idul Fitri: Kembali Suci">40. Makna Idul Fitri</option>
+                    <option value="Silaturahmi: Mempererat Ukhuwah">41. Silaturahmi & Ukhuwah</option>
+                    <option value="Zakat Mal di Bulan Ramadan">42. Zakat Mal</option>
+                    <option value="Wakaf dan Infaq: Investasi Akhirat">43. Wakaf & Infaq</option>
+                    <option value="Doa-doa Mustajab di Bulan Ramadan">44. Doa Mustajab</option>
+                    <option value="Qiyamul Lail: Shalat Malam">45. Qiyamul Lail</option>
+                    <option value="Meraih Predikat Taqwa">46. Meraih Predikat Taqwa</option>
+                    <option value="Istiqomah Pasca Ramadan">47. Istiqomah Pasca Ramadan</option>
+                    <option value="Ramadan Terakhirku (Muhasabah)">48. Ramadan Terakhirku</option>
+                    <option value="Ekonomi Syariah dan Ramadan">49. Ekonomi Syariah</option>
+                    <option value="Toleransi Beragama di Bulan Ramadan">50. Toleransi Beragama</option>
+                </select>
             </div>
             <div class="space-y-2">
                 <label class="text-xs font-bold text-emerald-200 uppercase tracking-wide">Pembicara</label>
@@ -234,6 +287,8 @@
                     <option value="5">5 Slide</option>
                     <option value="7">7 Slide</option>
                     <option value="10">10 Slide</option>
+                    <option value="15">15 Slide</option>
+                    <option value="20">20 Slide</option>
                 </select>
             </div>
             <div class="space-y-2">
