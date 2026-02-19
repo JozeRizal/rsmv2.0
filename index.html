@@ -5,19 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ramadhan Slide Maker (AI)</title>
     
-    <!-- FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Lato:wght@300;400;700&family=Merriweather:wght@300;700&family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&family=Oswald:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- PDF Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             theme: {
@@ -164,7 +160,6 @@
 </head>
 <body class="bg-gray-100 h-screen overflow-hidden flex flex-col md:flex-row font-sans">
 
-    <!-- FLOATING TEXT TOOLBAR -->
     <div id="textToolbar" data-html2canvas-ignore="true">
         <select id="fontFamilySelect" class="text-select" onchange="execCmd('fontName', this.value)">
             <option value="Lato">Lato</option>
@@ -191,18 +186,15 @@
         <input type="color" id="foreColorInput" class="text-color-input" oninput="execCmd('foreColor', this.value)">
     </div>
 
-    <!-- HIDDEN INPUTS -->
     <input type="file" id="imageUploader" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
     <input type="file" id="bgUploader" accept="image/*" class="hidden" onchange="handleBgUpload(event)">
 
-    <!-- SIDEBAR -->
     <aside class="w-full md:w-1/3 lg:w-1/4 bg-emerald-950 text-white flex flex-col h-full shadow-2xl z-20 border-r border-emerald-900">
         <div class="p-6 border-b border-emerald-900 bg-emerald-900/50">
-            <h1 class="text-3xl font-serif text-gold-500 font-bold mb-1 leading-tight">Ramadhan Slide Master</h1>
+            <h1 class="text-3xl font-serif text-gold-500 font-bold mb-1 leading-tight">Ramadhan Slide Maker</h1>
             <p class="text-xs text-emerald-300 uppercase tracking-widest mt-1">AI Presentation Tool</p>
         </div>
         <div class="flex-1 overflow-y-auto p-6 space-y-6">
-            <!-- API KEY INPUT -->
             <div class="space-y-2 pb-4 border-b border-emerald-800/50">
                 <label class="text-xs font-bold text-gold-400 uppercase tracking-wide flex justify-between items-center">
                     Google Gemini API Key
@@ -336,7 +328,6 @@
         </div>
     </aside>
 
-    <!-- PREVIEW AREA -->
     <main class="flex-1 h-full overflow-hidden flex flex-col bg-gray-100 relative" 
           onmousedown="handleCanvasClick(event)"
           onmousemove="handleGlobalMouseMove(event)"
@@ -873,7 +864,7 @@
                 Tone: Match the existing points. Language: Indonesian. 
                 Output: Just the plain text of the bullet point, no markdown, no bullets.`;
 
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${userKey}`, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${userKey}`, {
                     method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
@@ -935,7 +926,7 @@
 
             const prompt = `Create ${count} slides about "${topic}" by "${speaker}". Tone: ${toneInstruction}. JSON Array only. No Markdown. Schema: [{type:"title|content|outro", title:"", subtitle:"", speaker:"", points:[""]}]. Language: Indonesian.`;
             
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${userKey}`, {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${userKey}`, {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
             });
